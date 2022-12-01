@@ -15,7 +15,7 @@
       <input class="input" type="text" placeholder="Search for City/Country" />
     </div>
     <div class="control">
-      <a class="button is-info" @click="twoHourForecast"> Search </a>
+      <a class="button is-info" @click="getForecast"> Search </a>
     </div>
   </div>
 
@@ -55,7 +55,7 @@
       }}
     </div>
     <div class="temp">25°C</div>
-    <div class="weather">Rain</div>
+    <div class="weather is-size-2">{{ forecast }}</div>
   </div>
 
   <box class="box has-text-centered is-transparent">2 hour forecast</box>
@@ -65,17 +65,21 @@
 import { ref, reactive } from "vue";
 let time = ref(new Date());
 
+const forecast = ref(undefined);
+
 const weather = reactive({
-  area: "Jurong",
+  area: "Jurong East",
   country: "Singapore",
 });
 
-function twoHourForecast() {
-  fetch("https://api.data.gov.sg/v1/environment/2-hour-weather-forecast")
+async function getForecast() {
+  await fetch("https://api.data.gov.sg/v1/environment/2-hour-weather-forecast")
     .then((response) => response.json())
+    .then
+    // (data) => (forecast.value = data["items"][0]["forecasts"][18]["forecast"])
+    ()
     .then((data) => console.log(data));
 }
-twoHourForecast();
 </script>
 
 <style>
