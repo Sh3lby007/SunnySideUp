@@ -5,7 +5,7 @@
         <span class="icon">
           <i class="fa-solid fa-sun"></i>
         </span>
-        <span>Shelby Vue Weather</span>
+        <span>Shelby Vue Weather </span>
       </span>
     </div>
   </div>
@@ -17,33 +17,16 @@
     <div class="control">
       <a class="button is-info" @click="getForecast"> Search </a>
     </div>
+
+    <div class="control">
+      <a class="button is-info" @click="getTemperature"> temp</a>
+    </div>
   </div>
 
-  <div class="weather-info has-text-centered">
-    <div class="location">
-      <div class="dropdown is-hoverable">
-        <div class="dropdown-trigger">
-          <button
-            class="button"
-            aria-haspopup="true"
-            aria-controls="dropdown-menu4"
-          >
-            <span>Area/Town</span>
-            <span class="icon is-small">
-              <i class="fas fa-angle-down" aria-hidden="true"></i>
-            </span>
-          </button>
-        </div>
-        <div class="dropdown-menu" id="dropdown-menu4" role="menu">
-          <div class="dropdown-content">
-            <div class="dropdown-item">
-              <p>Input meta data from api here to choose towns</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      , {{ weather.country }}
-    </div>
+  <div
+    v-if="currentWeather !== undefined"
+    class="weather-info has-text-centered"
+  >
     <div class="date">
       {{
         new Intl.DateTimeFormat("default", {
@@ -51,35 +34,54 @@
           weekday: "long",
           month: "long",
           year: "numeric",
-        }).format(time)
+        }).format(new Date(currentWeather.time))
       }}
     </div>
-    <div class="temp">25°C</div>
-    <div class="weather is-size-2">{{ forecast }}</div>
+    <div class="temp">{{ currentWeather.temperature }}°C</div>
+    <div class="weather is-size-2">
+      Windspeed - {{ currentWeather.windspeed }}km/h
+    </div>
   </div>
 
-  <box class="box has-text-centered is-transparent">2 hour forecast</box>
+  <div class="box has-text-centered is-transparent">2 hour forecast</div>
+
+  <!-- Only show forecast once API has successfully retrieved the data -->
+  <div v-if="tempData !== undefined">
+    <div v-for="(hour, i) in tempData.time" :key="hour">
+      {{ hour }} - {{ tempData.temperature_2m[i] }}
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
-let time = ref(new Date());
+import { ref } from "vue";
 
-const forecast = ref(undefined);
+const tempData = ref(undefined);
+const currentWeather = ref(undefined);
 
-const weather = reactive({
-  area: "Jurong East",
-  country: "Singapore",
-});
-
-async function getForecast() {
-  await fetch("https://api.data.gov.sg/v1/environment/2-hour-weather-forecast")
-    .then((response) => response.json())
-    .then
-    // (data) => (forecast.value = data["items"][0]["forecasts"][18]["forecast"])
-    ()
-    .then((data) => console.log(data));
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      position.coords.latitude + position.coords.longitude;
+    });
+  } else {
+    alert("Geo Location not supported on this device");
+  }
 }
+
+async function getTemperature() {
+  const weatherData = await fetch(
+    "https://api.open-meteo.com/v1/forecast?current_weather=true&latitude=1.3521&longitude=103.8198&hourly=temperature_2m&timezone=Asia%2FSingapore"
+  )
+    .then((response) => response.json())
+    .then((data) => (console.log(data), data));
+
+  currentWeather.value = weatherData.current_weather;
+  tempData.value = weatherData.hourly;
+}
+
+// Run the function immediately on page load
+getTemperature();
 </script>
 
 <style>
@@ -87,6 +89,7 @@ async function getForecast() {
   opacity: 0.5;
   margin-bottom: 5%;
 }
+
 .notification {
   height: 8vh;
 }
@@ -104,6 +107,7 @@ async function getForecast() {
   font-size: 20px;
   margin-bottom: 2.5%;
 }
+
 .temp {
   display: inline-block;
   padding: 10px 25px;
