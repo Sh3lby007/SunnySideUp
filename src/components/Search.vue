@@ -14,15 +14,12 @@
     <div class="control">
       <input class="input" type="text" placeholder="Search for City/Country" />
     </div>
-    <div class="control">
-      <a class="button is-info" @click="getForecast"> Search </a>
-    </div>
 
     <div class="control">
       <a class="button is-info" @click="getTemperature"> temp</a>
     </div>
   </div>
-
+  <!-- !== Means strict inequality, so if the currentWeather is defined when the API is fetched, we want the div below to show value. -->
   <div
     v-if="currentWeather !== undefined"
     class="weather-info has-text-centered"
