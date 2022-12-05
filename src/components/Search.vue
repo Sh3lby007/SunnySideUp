@@ -16,7 +16,7 @@
     </div>
 
     <div class="control">
-      <a class="button is-info" @click="getTemperature"> temp</a>
+      <a class="button is-info" @click="getTemperature, getLocation()"> temp</a>
     </div>
   </div>
   <!-- !== Means strict inequality, so if the currentWeather is defined when the API is fetched, we want the div below to show value. -->
@@ -34,9 +34,10 @@
         }).format(new Date(currentWeather.time))
       }}
     </div>
-    <div class="temp">{{ currentWeather.temperature }}°C</div>
+    <div class="temp">Temperature - {{ currentWeather.temperature }}°C</div>
     <div class="weather is-size-2">
-      Windspeed - {{ currentWeather.windspeed }}km/h
+      Windspeed - {{ currentWeather.windspeed }}km/h <br />Wind Direction -
+      {{ currentWeather.winddirection }}
     </div>
   </div>
 

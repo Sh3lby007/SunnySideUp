@@ -1,12 +1,12 @@
 <template>
   <div id="app">
-    <Navigation />
+    <Search />
     <RouterView />
   </div>
 </template>
 
 <script setup>
-import Navigation from "./components/Navigation.vue";
+import Search from "./components/Search.vue";
 import { RouterView } from "vue-router";
 </script>
 
