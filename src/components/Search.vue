@@ -11,12 +11,18 @@
   </div>
 
   <div class="field has-addons has-addons-centered">
+    <!-- Data bind the search result to a variable which will be used in an api to get their latitude and longtitude values. -->
     <div class="control">
-      <input class="input" type="text" placeholder="Search for City/Country" />
+      <input
+        class="input"
+        type="text"
+        placeholder="Search for City/Country"
+        v-model="cityName"
+      />
     </div>
 
     <div class="control">
-      <a class="button is-info" @click="getTemperature, getLocation()"> temp</a>
+      <a class="button is-info" @click="getTemperature">Search</a>
     </div>
   </div>
   <!-- !== Means strict inequality, so if the currentWeather is defined when the API is fetched, we want the div below to show value. -->
@@ -31,12 +37,12 @@
           weekday: "long",
           month: "long",
           year: "numeric",
-        }).format(new Date(currentWeather.time))
+        }).format(new Date())
       }}
     </div>
-    <div class="temp">Temperature - {{ currentWeather.temperature }}°C</div>
+    <div class="temp">Temperature - {{ currentWeather }}°C</div>
     <div class="weather is-size-2">
-      Windspeed - {{ currentWeather.windspeed }}km/h <br />Wind Direction -
+      Windspeed - {{ currentWeather }}km/h <br />Wind Direction -
       {{ currentWeather.winddirection }}
     </div>
   </div>
@@ -56,30 +62,51 @@ import { ref } from "vue";
 
 const tempData = ref(undefined);
 const currentWeather = ref(undefined);
+const cityName = ref("");
+const latitude = ref(undefined);
+const longitude = ref(undefined);
 
-function getLocation() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function (position) {
-      position.coords.latitude + position.coords.longitude;
-    });
-  } else {
-    alert("Geo Location not supported on this device");
-  }
+// function getLocation() {
+//   if (navigator.geolocation) {
+//     navigator.geolocation.getCurrentPosition(function (position) {
+//       position.coords.latitude + position.coords.longitude;
+//     });
+//   } else {
+//     alert("Geo Location not supported on this device");
+//   }
+// }
+
+async function getForecast() {
+  const weatherForecast = await fetch(
+    `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude.value}&lon=${longitude.value}&appid=c3e7d4b44bd41c743b5e4c019926a500`
+  );
 }
 
-async function getTemperature() {
-  const weatherData = await fetch(
-    "https://api.open-meteo.com/v1/forecast?current_weather=true&latitude=1.3521&longitude=103.8198&hourly=temperature_2m&timezone=Asia%2FSingapore"
-  )
-    .then((response) => response.json())
-    .then((data) => (console.log(data), data));
+async function getLocation() {
+  const directGeocode = await fetch(
+    `https://api.openweathermap.org/geo/1.0/direct?q=${cityName.value}&appid=c3e7d4b44bd41c743b5e4c019926a500`
+  ).then((response) => response.json());
 
-  currentWeather.value = weatherData.current_weather;
+  console.log(directGeocode);
+  // This api returns an array with a name 0 and since we only want the lat and lon values, therefore pulling them out and assigning them the correct values.
+  const { lat, lon } = directGeocode[0];
+
+  return { lat, lon };
+}
+getLocation();
+
+async function getTemperature() {
+  // Have to declare here since the lat and lon variables are not global but limited to getLocation() function
+  const { lat, lon } = await getLocation();
+  const weatherData = await fetch(
+    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=c3e7d4b44bd41c743b5e4c019926a500`
+  ).then((response) => response.json());
+  console.log(weatherData);
+  currentWeather.value = weatherData.main.temp;
   tempData.value = weatherData.hourly;
 }
 
 // Run the function immediately on page load
-getTemperature();
 </script>
 
 <style>
