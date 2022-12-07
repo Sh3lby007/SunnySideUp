@@ -22,14 +22,16 @@
     </div>
 
     <div class="control">
-      <a class="button is-info" @click="getTemperature">Search</a>
+      <a
+        class="button is-info"
+        @click="getWeather(), getForecast(), getLocation"
+        >Search</a
+      >
     </div>
   </div>
-  <!-- !== Means strict inequality, so if the currentWeather is defined when the API is fetched, we want the div below to show value. -->
-  <div
-    v-if="currentWeather !== undefined"
-    class="weather-info has-text-centered"
-  >
+  <!-- !== Means strict inequality, so if the currentTemp is defined when the API is fetched, we want the div below to show value. -->
+  <div v-if="currentTemp !== undefined" class="weather-info has-text-centered">
+    <div class="location">{{ cityName }}</div>
     <div class="date">
       {{
         new Intl.DateTimeFormat("default", {
@@ -40,19 +42,22 @@
         }).format(new Date())
       }}
     </div>
-    <div class="temp">Temperature - {{ currentWeather }}°C</div>
-    <div class="weather is-size-2">
-      Windspeed - {{ currentWeather }}km/h <br />Wind Direction -
-      {{ currentWeather.winddirection }}
+    <div class="temp">Temperature - {{ currentTemp.temp }}°C</div>
+    <div class="min_max">
+      {{ currentTemp.temp_max }} / {{ currentTemp.temp_min }}°C
     </div>
+    <div class="weather is-size-3">
+      Current Weather - {{ currentWeather.description }}
+    </div>
+    <div class="wind is-size-2">Windspeed - {{ windData.speed }}km/h</div>
   </div>
 
   <div class="box has-text-centered is-transparent">2 hour forecast</div>
 
   <!-- Only show forecast once API has successfully retrieved the data -->
-  <div v-if="tempData !== undefined">
-    <div v-for="(hour, i) in tempData.time" :key="hour">
-      {{ hour }} - {{ tempData.temperature_2m[i] }}
+  <div v-if="tempForecast !== undefined">
+    <div v-for="(threeHour, i) in tempForecast[i].main.temp" :key="threeHour">
+      {{ threeHour }} - {{ tempForecast[i].dt_text }}
     </div>
   </div>
 </template>
@@ -60,26 +65,20 @@
 <script setup>
 import { ref } from "vue";
 
-const tempData = ref(undefined);
+const tempForecast = ref(undefined);
+const currentTemp = ref(undefined);
+const windData = ref(undefined);
 const currentWeather = ref(undefined);
 const cityName = ref("");
-const latitude = ref(undefined);
-const longitude = ref(undefined);
-
-// function getLocation() {
-//   if (navigator.geolocation) {
-//     navigator.geolocation.getCurrentPosition(function (position) {
-//       position.coords.latitude + position.coords.longitude;
-//     });
-//   } else {
-//     alert("Geo Location not supported on this device");
-//   }
-// }
 
 async function getForecast() {
+  const { lat, lon } = await getLocation();
   const weatherForecast = await fetch(
-    `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude.value}&lon=${longitude.value}&appid=c3e7d4b44bd41c743b5e4c019926a500`
-  );
+    `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=c3e7d4b44bd41c743b5e4c019926a500`
+  ).then((response) => response.json());
+
+  tempForecast.value = weatherForecast.list;
+  console.log(tempForecast.value);
 }
 
 async function getLocation() {
@@ -87,26 +86,23 @@ async function getLocation() {
     `https://api.openweathermap.org/geo/1.0/direct?q=${cityName.value}&appid=c3e7d4b44bd41c743b5e4c019926a500`
   ).then((response) => response.json());
 
-  console.log(directGeocode);
   // This api returns an array with a name 0 and since we only want the lat and lon values, therefore pulling them out and assigning them the correct values.
   const { lat, lon } = directGeocode[0];
 
   return { lat, lon };
 }
-getLocation();
 
-async function getTemperature() {
+async function getWeather() {
   // Have to declare here since the lat and lon variables are not global but limited to getLocation() function
   const { lat, lon } = await getLocation();
   const weatherData = await fetch(
     `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=c3e7d4b44bd41c743b5e4c019926a500`
   ).then((response) => response.json());
-  console.log(weatherData);
-  currentWeather.value = weatherData.main.temp;
-  tempData.value = weatherData.hourly;
+  // console.log(weatherData);
+  currentTemp.value = weatherData.main;
+  currentWeather.value = weatherData.weather[0];
+  windData.value = weatherData.wind;
 }
-
-// Run the function immediately on page load
 </script>
 
 <style>
@@ -142,7 +138,7 @@ async function getTemperature() {
 }
 
 .weather {
-  margin-bottom: 15%;
+  margin-bottom: 5%;
 }
 
 .box {
