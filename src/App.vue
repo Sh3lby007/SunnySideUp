@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div>
     <Search />
     <RouterView />
   </div>
@@ -9,10 +9,3 @@
 import Search from "./components/Search.vue";
 import { RouterView } from "vue-router";
 </script>
-
-<style>
-#app {
-  background-image: url("./assets/weather-bg.jpg");
-  height: 100vh;
-}
-</style>

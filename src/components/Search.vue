@@ -1,75 +1,84 @@
 <template>
-  <div class="container is-max-desktop">
-    <div class="notification px-5 has-text-centered">
-      <span class="icon-text">
-        <span class="icon">
-          <i class="fa-solid fa-sun"></i>
+  <div :class="{ background_image }">
+    <div class="container is-max-desktop">
+      <div class="notification px-5 has-text-centered">
+        <span class="icon-text">
+          <span class="icon">
+            <i class="fa-solid fa-sun"></i>
+          </span>
+          <span>Shelby Vue Weather </span>
         </span>
-        <span>Shelby Vue Weather </span>
-      </span>
-    </div>
-  </div>
-
-  <div class="field has-addons has-addons-centered">
-    <!-- Data bind the search result to a variable which will be used in an api to get their latitude and longtitude values. -->
-    <div class="control">
-      <input
-        class="input"
-        type="text"
-        placeholder="Search for City/Country"
-        v-model="cityName"
-      />
+      </div>
     </div>
 
-    <div class="control">
-      <a
-        class="button is-info"
-        @click="getWeather(), getForecast(), getLocation"
-        >Search</a
-      >
-    </div>
-  </div>
-  <!-- !== Means strict inequality, so if the currentTemp is defined when the API is fetched, we want the div below to show value. -->
-  <div v-if="currentTemp !== undefined" class="weather-info has-text-centered">
-    <div class="location">{{ cityName }}</div>
-    <div class="date">
-      {{
-        new Intl.DateTimeFormat("default", {
-          day: "2-digit",
-          weekday: "long",
-          month: "long",
-          year: "numeric",
-        }).format(new Date())
-      }}
-    </div>
-    <div class="temp">Temperature - {{ currentTemp.temp }}°C</div>
-    <div class="min_max">
-      {{ currentTemp.temp_max }} / {{ currentTemp.temp_min }}°C
-    </div>
-    <div class="weather is-size-3">
-      Current Weather - {{ currentWeather.description }}
-    </div>
-    <div class="wind is-size-2">Windspeed - {{ windData.speed }}km/h</div>
-  </div>
+    <div class="field has-addons has-addons-centered">
+      <!-- Data bind the search result to a variable which will be used in an api to get their latitude and longtitude values. -->
+      <div class="control">
+        <input
+          class="input"
+          type="text"
+          placeholder="Search for City/Country"
+          v-model="cityName"
+        />
+      </div>
 
-  <div class="box has-text-centered is-transparent">2 hour forecast</div>
-
-  <!-- Only show forecast once API has successfully retrieved the data -->
-  <div v-if="tempForecast !== undefined">
-    <div v-for="(threeHour, i) in tempForecast[i].main.temp" :key="threeHour">
-      {{ threeHour }} - {{ tempForecast[i].dt_text }}
+      <div class="control">
+        <a
+          class="button is-info"
+          @click="getWeather(), getForecast(), getLocation"
+          >Search</a
+        >
+      </div>
     </div>
+    <!-- !== Means strict inequality, so if the currentTemp is defined when the API is fetched, we want the div below to show value. -->
+    <div
+      v-if="currentTemp !== undefined"
+      class="weather-info has-text-centered"
+    >
+      <div class="location">{{ cityName }}</div>
+      <div class="date">
+        {{
+          new Intl.DateTimeFormat("default", {
+            day: "2-digit",
+            weekday: "long",
+            month: "long",
+            year: "numeric",
+          }).format(new Date())
+        }}
+      </div>
+      <div class="temp">Temperature - {{ currentTemp.temp }}°C</div>
+      <div class="min_max">
+        {{ currentTemp.temp_max }} / {{ currentTemp.temp_min }}°C
+      </div>
+      <div class="weather is-size-3">
+        Current Weather - {{ currentWeather.main }}
+      </div>
+      <div class="wind is-size-2">Windspeed - {{ windData.speed }}km/h</div>
+    </div>
+
+    <div class="box has-text-centered is-transparent">2 hour forecast</div>
+
+    <!-- Only show forecast once API has successfully retrieved the data -->
+    <!-- <div v-if="tempForecast !== undefined">
+    <div
+      v-for="(threeHour, i) in tempForecast.list[i].main.temp"
+      :key="threeHour"
+    >
+      {{ threeHour }} - {{ tempForecast.list[i].dt_text }}
+    </div>
+  </div> -->
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 
-const tempForecast = ref(undefined);
-const currentTemp = ref(undefined);
-const windData = ref(undefined);
-const currentWeather = ref(undefined);
-const cityName = ref("");
+let tempForecast = ref(undefined);
+let currentTemp = ref(undefined);
+let windData = ref(undefined);
+let currentWeather = ref(undefined);
+let cityName = ref("");
+let background_image = ref("bg-default");
 
 async function getForecast() {
   const { lat, lon } = await getLocation();
@@ -78,7 +87,7 @@ async function getForecast() {
   ).then((response) => response.json());
 
   tempForecast.value = weatherForecast.list;
-  console.log(tempForecast.value);
+  // console.log(tempForecast.value);
 }
 
 async function getLocation() {
@@ -98,10 +107,23 @@ async function getWeather() {
   const weatherData = await fetch(
     `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=c3e7d4b44bd41c743b5e4c019926a500`
   ).then((response) => response.json());
-  // console.log(weatherData);
   currentTemp.value = weatherData.main;
   currentWeather.value = weatherData.weather[0];
   windData.value = weatherData.wind;
+
+  switch (currentWeather.value.main) {
+    case "Clouds":
+      console.log("clouds");
+      background_image.value = ".bg-clouds";
+      break;
+    case "Rain":
+      console.log("rain");
+      background_image.value = "bg-rain";
+      break;
+    default:
+      console.log("debug");
+      return "bg-default";
+  }
 }
 </script>
 
@@ -143,5 +165,17 @@ async function getWeather() {
 
 .box {
   opacity: 0.4;
+}
+
+.bg-rain {
+  background-image: url("./assets/bg-rainy.jpg");
+}
+
+.bg-default {
+  background-image: url("./assets/weather-bg.jpg");
+}
+
+.bg-clouds {
+  background-image: url("./assets/bg-cloudy.jpg");
 }
 </style>
