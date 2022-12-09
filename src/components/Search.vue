@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ background_image }">
+  <div :class="{ backgroundImage }">
     <div class="container is-max-desktop">
       <div class="notification px-5 has-text-centered">
         <span class="icon-text">
@@ -12,13 +12,14 @@
     </div>
 
     <div class="field has-addons has-addons-centered">
-      <!-- Data bind the search result to a variable which will be used in an api to get their latitude and longtitude values. -->
+      <!-- Data bind the search result to a variable which will be used in an api to get their latitude and longtitude values. All the functions can be called when user clicks enter key on their keyboard -->
       <div class="control">
         <input
           class="input"
           type="text"
           placeholder="Search for City/Country"
           v-model="cityName"
+          @keyup.enter="getWeather(), getForecast(), getLocation()"
         />
       </div>
 
@@ -35,8 +36,8 @@
       v-if="currentTemp !== undefined"
       class="weather-info has-text-centered"
     >
-      <div class="location">{{ cityName }}</div>
-      <div class="date">
+      <div class="location has-text-white">{{ cityName }}</div>
+      <div class="date has-text-white">
         {{
           new Intl.DateTimeFormat("default", {
             day: "2-digit",
@@ -46,14 +47,18 @@
           }).format(new Date())
         }}
       </div>
-      <div class="temp">Temperature - {{ currentTemp.temp }}°C</div>
-      <div class="min_max">
+      <div class="temp has-text-white">
+        Temperature - {{ currentTemp.temp }}°C
+      </div>
+      <div class="min_max has-text-white is-size-2">
         {{ currentTemp.temp_max }} / {{ currentTemp.temp_min }}°C
       </div>
-      <div class="weather is-size-3">
+      <div class="weather is-size-3 has-text-white">
         Current Weather - {{ currentWeather.main }}
       </div>
-      <div class="wind is-size-2">Windspeed - {{ windData.speed }}km/h</div>
+      <div class="wind is-size-2 has-text-white">
+        Windspeed - {{ windData.speed }}km/h
+      </div>
     </div>
 
     <div class="box has-text-centered is-transparent">2 hour forecast</div>
@@ -78,7 +83,7 @@ let currentTemp = ref(undefined);
 let windData = ref(undefined);
 let currentWeather = ref(undefined);
 let cityName = ref("");
-let background_image = ref("bg-default");
+let backgroundImage = ref("bg-default");
 
 async function getForecast() {
   const { lat, lon } = await getLocation();
@@ -114,11 +119,11 @@ async function getWeather() {
   switch (currentWeather.value.main) {
     case "Clouds":
       console.log("clouds");
-      background_image.value = ".bg-clouds";
+      backgroundImage.value = "bg-cloudy";
       break;
     case "Rain":
       console.log("rain");
-      background_image.value = "bg-rain";
+      backgroundImage.value = "bg-rain";
       break;
     default:
       console.log("debug");
@@ -167,15 +172,27 @@ async function getWeather() {
   opacity: 0.4;
 }
 
-.bg-rain {
-  background-image: url("./assets/bg-rainy.jpg");
+.backgroundImage {
+  background-image: url("src/assets/bg-rainy.jpg");
+  height: 100vh;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
 }
 
-.bg-default {
-  background-image: url("./assets/weather-bg.jpg");
+.backgroundImage {
+  background-image: url("src/assets/weather-bg.jpg");
+  height: 100vh;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
-.bg-clouds {
-  background-image: url("./assets/bg-cloudy.jpg");
+.backgroundImage {
+  background-image: url("src/assets/bg-cloudy.jpg");
+  height: 100vh;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
 }
 </style>
