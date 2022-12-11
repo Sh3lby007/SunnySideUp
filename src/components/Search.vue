@@ -1,5 +1,8 @@
 <template>
-  <div :class="{ backgroundImage }">
+  <!-- Previously, backgroundImage class was encapsulated in a curly braces which denominates it as an object. This was not even mentioned in the class and style bindings documentation because it was already mentioned in the template syntax documentation as it's the most basic attribute binding. 
+  As our goal is for the actual background image to change class name depending on what switch case, we just have to bind the backgroundImage variable as a basic string and not an object, Depending on the value checked by the switch case, the backgroundImage ref will change accordingly. -->
+
+  <div :class="backgroundImage">
     <div class="container is-max-desktop">
       <div class="notification px-5 has-text-centered">
         <span class="icon-text">
@@ -12,25 +15,22 @@
     </div>
 
     <div class="field has-addons has-addons-centered">
-      <!-- Data bind the search result to a variable which will be used in an api to get their latitude and longtitude values. All the functions can be called when user clicks enter key on their keyboard -->
+      <!-- Data bind the search result to a variable which will be used in an api to get their latitude and longtitude values. Calls the aggregate function when user hits enter on the keyboard. -->
       <div class="control">
         <input
           class="input"
           type="text"
           placeholder="Search for City/Country"
           v-model="cityName"
-          @keyup.enter="getWeather(), getForecast(), getLocation()"
+          @keyup.enter="getData"
         />
       </div>
 
       <div class="control">
-        <a
-          class="button is-info"
-          @click="getWeather(), getForecast(), getLocation"
-          >Search</a
-        >
+        <button class="button is-info" @click="getData">Search</button>
       </div>
     </div>
+
     <!-- !== Means strict inequality, so if the currentTemp is defined when the API is fetched, we want the div below to show value. -->
     <div
       v-if="currentTemp !== undefined"
@@ -61,43 +61,35 @@
       </div>
     </div>
 
-    <div class="box has-text-centered is-transparent">2 hour forecast</div>
-
-    <!-- Only show forecast once API has successfully retrieved the data -->
-    <!-- <div v-if="tempForecast !== undefined">
-    <div
-      v-for="(threeHour, i) in tempForecast.list[i].main.temp"
-      :key="threeHour"
-    >
-      {{ threeHour }} - {{ tempForecast.list[i].dt_text }}
+    <!-- Only show forecast once API has successfully retrieved the data.
+    The :value only can be a string, number or symbol and must be unique. i is a number since it is the index of the tempForecast array -->
+    <div v-if="tempForecast !== undefined">
+      <div v-for="(threeHour, i) in tempForecast" :key="i">
+        {{ threeHour.main.temp }} -- {{ threeHour.dt_txt }}
+      </div>
     </div>
-  </div> -->
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-
+// Global variables required to be used for global scope.
 let tempForecast = ref(undefined);
 let currentTemp = ref(undefined);
 let windData = ref(undefined);
 let currentWeather = ref(undefined);
 let cityName = ref("");
+
+/**
+ * Background Image class string for the main div element.
+ * Defaults to the `bg-default` class defined in current file
+ * so that there is a default background image shown.
+ */
 let backgroundImage = ref("bg-default");
-
-async function getForecast() {
-  const { lat, lon } = await getLocation();
-  const weatherForecast = await fetch(
-    `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=c3e7d4b44bd41c743b5e4c019926a500`
-  ).then((response) => response.json());
-
-  tempForecast.value = weatherForecast.list;
-  // console.log(tempForecast.value);
-}
 
 async function getLocation() {
   const directGeocode = await fetch(
-    `https://api.openweathermap.org/geo/1.0/direct?q=${cityName.value}&appid=c3e7d4b44bd41c743b5e4c019926a500`
+    `https://api.openweathermap.org/geo/1.0/direct?q=${cityName.value}&appid=19ec300e5d82ae1f8146df526c68a5be`
   ).then((response) => response.json());
 
   // This api returns an array with a name 0 and since we only want the lat and lon values, therefore pulling them out and assigning them the correct values.
@@ -106,16 +98,43 @@ async function getLocation() {
   return { lat, lon };
 }
 
-async function getWeather() {
+/**
+ * Aggregate function to load all the data, with a single set of
+ * latitude and longitude values from getLocation.
+ */
+async function getData() {
   // Have to declare here since the lat and lon variables are not global but limited to getLocation() function
   const { lat, lon } = await getLocation();
+
+  /**
+   * The reason why calling these async function calls do not need to put await in front
+   * is because these are fire and forget functions, since they do the value updating internally.
+   */
+  getForecast(lat, lon);
+  getWeather(lat, lon);
+}
+
+/*
+ * tempForecast becomes the array which we require to loop through to get the forecast data we need.
+ *
+ */
+async function getForecast(lat, lon) {
+  const weatherForecast = await fetch(
+    `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=19ec300e5d82ae1f8146df526c68a5be`
+  ).then((response) => response.json());
+
+  tempForecast.value = weatherForecast.list;
+}
+
+async function getWeather(lat, lon) {
   const weatherData = await fetch(
-    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=c3e7d4b44bd41c743b5e4c019926a500`
+    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=19ec300e5d82ae1f8146df526c68a5be`
   ).then((response) => response.json());
   currentTemp.value = weatherData.main;
   currentWeather.value = weatherData.weather[0];
   windData.value = weatherData.wind;
 
+  // Check for currentWeather value and change backgroundImage variable value to display appropriate background images that is concurrent with weather.
   switch (currentWeather.value.main) {
     case "Clouds":
       console.log("clouds");
@@ -123,11 +142,16 @@ async function getWeather() {
       break;
     case "Rain":
       console.log("rain");
-      backgroundImage.value = "bg-rain";
+      backgroundImage.value = "bg-rainy";
       break;
+
+    /*
+     * We don't need to add an additonal break in the default case because if the
+     * previous 2 cases is skipped, this will automatically be the case we want.
+     */
     default:
-      console.log("debug");
-      return "bg-default";
+      console.log("default");
+      backgroundImage.value = "bg-default";
   }
 }
 </script>
@@ -172,7 +196,7 @@ async function getWeather() {
   opacity: 0.4;
 }
 
-.backgroundImage {
+.bg-rainy {
   background-image: url("src/assets/bg-rainy.jpg");
   height: 100vh;
   background-size: cover;
@@ -180,7 +204,7 @@ async function getWeather() {
   background-repeat: no-repeat;
 }
 
-.backgroundImage {
+.bg-default {
   background-image: url("src/assets/weather-bg.jpg");
   height: 100vh;
   background-position: center center;
@@ -188,7 +212,7 @@ async function getWeather() {
   background-size: cover;
 }
 
-.backgroundImage {
+.bg-cloudy {
   background-image: url("src/assets/bg-cloudy.jpg");
   height: 100vh;
   background-size: cover;
