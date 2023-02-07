@@ -131,7 +131,7 @@ async function getData() {
 
 async function getForecast(lat, lon) {
   const weatherForecast = await fetch(
-    `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=19ec300e5d82ae1f8146df526c68a5be`
+    `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
   ).then((response) => response.json());
 
   tempForecast.value = weatherForecast.list;
@@ -139,7 +139,7 @@ async function getForecast(lat, lon) {
 
 async function getWeather(lat, lon) {
   const weatherData = await fetch(
-    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=19ec300e5d82ae1f8146df526c68a5be`
+    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
   ).then((response) => response.json());
   currentTemp.value = weatherData.main;
   currentWeather.value = weatherData.weather[0];

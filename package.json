@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "vite --port 8080",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:gh-pages": " npm run build:delete && npx vite build --mode github-pages",
+    "deploy:gh-pages": "npx gh-pages -d dist"
   },
   "dependencies": {
     "pinia": "^2.0.26",
