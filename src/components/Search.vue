@@ -1,6 +1,12 @@
 <template>
-  <!-- Previously, backgroundImage class was encapsulated in a curly braces which denominates it as an object. This was not even mentioned in the class and style bindings documentation because it was already mentioned in the template syntax documentation as it's the most basic attribute binding. 
-  As our goal is for the actual background image to change class name depending on what switch case, we just have to bind the backgroundImage variable as a basic string and not an object, Depending on the value checked by the switch case, the backgroundImage ref will change accordingly. -->
+  <!-- 
+    Previously, backgroundImage class was encapsulated in a curly braces which denominates it as an object. 
+    This was not even mentioned in the class and style bindings documentation because it was already mentioned 
+    in the template syntax documentation as it's the most basic attribute binding. As our goal is for the actual 
+    background image to change class name depending on what switch case, we just have to bind the backgroundImage 
+    variable as a basic string and not an object, Depending on the value checked by the switch case, the 
+    backgroundImage ref will change accordingly. 
+  -->
 
   <div :class="backgroundImage">
     <div class="container is-max-desktop">
@@ -15,7 +21,10 @@
     </div>
 
     <div class="field has-addons has-addons-centered">
-      <!-- Data bind the search result to a variable which will be used in an api to get their latitude and longtitude values. Calls the aggregate function when user hits enter on the keyboard. -->
+      <!-- 
+        Data bind the search result to a variable which will be used in an api to get their latitude and longtitude 
+        values. Calls the aggregate function when user hits enter on the keyboard. 
+      -->
       <div class="control">
         <input
           class="input"
@@ -61,8 +70,10 @@
       </div>
     </div>
 
-    <!-- Only show forecast once API has successfully retrieved the data.
-    The :value only can be a string, number or symbol and must be unique. i is a number since it is the index of the tempForecast array -->
+    <!-- 
+      Only show forecast once API has successfully retrieved the data. The :value only can be a string, number 
+      or symbol and must be unique. i is a number since it is the index of the tempForecast array 
+    -->
     <div v-if="tempForecast !== undefined">
       <div v-for="(threeHour, i) in tempForecast" :key="i">
         {{ threeHour.main.temp }} -- {{ threeHour.dt_txt }}
@@ -73,12 +84,14 @@
 
 <script setup>
 import { ref } from "vue";
+
 // Global variables required to be used for global scope.
 let tempForecast = ref(undefined);
 let currentTemp = ref(undefined);
 let windData = ref(undefined);
 let currentWeather = ref(undefined);
 let cityName = ref("");
+const API_KEY = import.meta.env.VITE_APP_API_KEY;
 
 /**
  * Background Image class string for the main div element.
@@ -89,7 +102,7 @@ let backgroundImage = ref("bg-default");
 
 async function getLocation() {
   const directGeocode = await fetch(
-    `https://api.openweathermap.org/geo/1.0/direct?q=${cityName.value}&appid={API KEY}`
+    `https://api.openweathermap.org/geo/1.0/direct?q=${cityName.value}&appid=${API_KEY}`
   ).then((response) => response.json());
 
   // This api returns an array with a name 0 and since we only want the lat and lon values, therefore pulling them out and assigning them the correct values.
@@ -114,13 +127,11 @@ async function getData() {
   getWeather(lat, lon);
 }
 
-/*
- * tempForecast becomes the array which we require to loop through to get the forecast data we need.
- *
- */
+// tempForecast becomes the array which we require to loop through to get the forecast data we need.
+
 async function getForecast(lat, lon) {
   const weatherForecast = await fetch(
-    `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid={API KEY}`
+    `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
   ).then((response) => response.json());
 
   tempForecast.value = weatherForecast.list;
@@ -128,7 +139,7 @@ async function getForecast(lat, lon) {
 
 async function getWeather(lat, lon) {
   const weatherData = await fetch(
-    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid={API KEY}`
+    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
   ).then((response) => response.json());
   currentTemp.value = weatherData.main;
   currentWeather.value = weatherData.weather[0];
