@@ -45,8 +45,8 @@
       v-if="currentTemp !== undefined"
       class="weather-info has-text-centered"
     >
-      <div class="location has-text-white">{{ cityName }}</div>
-      <div class="date has-text-white">
+      <div class="location">{{ cityName }}</div>
+      <div class="date">
         {{
           new Intl.DateTimeFormat("default", {
             day: "2-digit",
@@ -56,18 +56,14 @@
           }).format(new Date())
         }}
       </div>
-      <div class="temp has-text-white">
-        Temperature - {{ currentTemp.temp }}°C
-      </div>
-      <div class="min_max has-text-white is-size-2">
+      <div class="temp">Temperature - {{ currentTemp.temp }}°C</div>
+      <div class="min_max is-size-2">
         {{ currentTemp.temp_max }} / {{ currentTemp.temp_min }}°C
       </div>
-      <div class="weather is-size-3 has-text-white">
+      <div class="weather is-size-3">
         Current Weather - {{ currentWeather.main }}
       </div>
-      <div class="wind is-size-2 has-text-white">
-        Windspeed - {{ windData.speed }}km/h
-      </div>
+      <div class="wind is-size-2">Windspeed - {{ windData.speed }}km/h</div>
     </div>
 
     <!-- 
