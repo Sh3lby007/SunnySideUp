@@ -6,8 +6,20 @@
       <div class="weather-gradient"></div>
 
       <div class="date-container">
-        <h2 class="date-dayname">Tuesday</h2>
-        <span class="date-day">1223/23/2023</span>
+        <h2 class="date-dayname">
+          {{
+            new Intl.DateTimeFormat("default", {
+              weekday: "long",
+            }).format(new Date())
+          }}
+        </h2>
+        <span class="date-day">{{
+          new Intl.DateTimeFormat("default", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }).format(new Date())
+        }}</span>
         <i class="fas fa-map-marker-alt">
           <span class="location">singapore</span>
         </i>
@@ -50,7 +62,11 @@
                 https://fontawesome.com/icons/categories/weather
                 Below icon tag to be rendered conditionally depending on the weather returned from data -->
             <i></i>
-            <span class="day-name">Tues</span>
+            <span class="day-name">{{
+              new Intl.DateTimeFormat("default", {
+                weekday: "short",
+              }).format(new Date())
+            }}</span>
             <span class="day-temp">29degree</span>
           </li>
           <li class="active">
