@@ -1,27 +1,27 @@
 <script setup></script>
 
 <template>
-  <div class="container">
+  <div class="containers">
     <div class="weather-side">
       <div class="weather-gradient"></div>
 
       <div class="date-container">
-        <h2 class="date-dayname">
+        <h2 class="is-size-4">
           {{
             new Intl.DateTimeFormat("default", {
               weekday: "long",
             }).format(new Date())
           }}
         </h2>
-        <span class="date-day">{{
+        <span class="is-block is-size-5">{{
           new Intl.DateTimeFormat("default", {
             day: "2-digit",
             month: "short",
             year: "numeric",
           }).format(new Date())
         }}</span>
-        <i class="fas fa-map-marker-alt">
-          <span class="location">singapore</span>
+        <i class="fas fa-2x fa-map-marker-alt">
+          <span class="is-inline-block is-size-4 my-4 ml-3">Singapore</span>
         </i>
       </div>
 
@@ -38,17 +38,17 @@
       <div class="today-info-container">
         <div class="today-info">
           <div class="precipitation">
-            <span class="title">Precipitation</span>
+            <span class="title has-text-white">Precipitation</span>
             <span class="value">0%</span>
             <div class="clear"></div>
           </div>
           <div class="humidity">
-            <span class="title">Humidity</span>
+            <span class="title has-text-white">Humidity</span>
             <span class="value">0%</span>
             <div class="clear"></div>
           </div>
           <div class="wind">
-            <span class="title">Wind</span>
+            <span class="title has-text-white">Wind</span>
             <span class="value">24 km/h</span>
             <div class="clear"></div>
           </div>
@@ -142,7 +142,7 @@ body {
   justify-content: center;
 }
 
-.container {
+.containers {
   border-radius: 25px;
   -webkit-box-shadow: 0 0 70px -10px rgba(0, 0, 0, 0.2);
   box-shadow: 0 0 70px -10px rgba(0, 0, 0, 0.2);
@@ -191,26 +191,6 @@ body {
   left: 25px;
 }
 
-.date-dayname {
-  margin: 0;
-}
-
-.date-day {
-  display: block;
-}
-
-.location {
-  display: inline-block;
-  margin-top: 10px;
-}
-
-.location-icon {
-  display: inline-block;
-  height: 0.8em;
-  width: auto;
-  margin-right: 5px;
-}
-
 .weather-container {
   position: absolute;
   bottom: 25px;
@@ -242,23 +222,9 @@ body {
 .today-info {
   padding: 15px;
   margin: 0 25px 25px 25px;
-  /* 	box-shadow: 0 0 50px -5px rgba(0, 0, 0, 0.25); */
+  box-shadow: 0 0 50px -5px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
 }
-
-.today-info > div:not(:last-child) {
-  margin: 0 0 10px 0;
-}
-
-.today-info > div .title {
-  float: left;
-  font-weight: 700;
-}
-
-.today-info > div .value {
-  float: right;
-}
-
 .week-list {
   list-style-type: none;
   padding: 0;
