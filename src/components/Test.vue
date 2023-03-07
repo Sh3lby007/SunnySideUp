@@ -44,6 +44,7 @@ async function getWeather(lat, lon) {
   currentWeather.value = weatherData.weather[0];
   windData.value = weatherData.wind;
 }
+</script>
 
 <template>
   <div class="containers">
@@ -141,13 +142,19 @@ async function getWeather(lat, lon) {
         </ul>
       </div>
 
-      <div class="location-container">
-        <!-- can convert to input or pop out smth to change location -->
-        <button class="location-button">
-          <i class="fas fa-map-marker-alt">
-            <span>Change location</span>
-          </i>
-        </button>
+      <div class="field px-5">
+        <p class="control has-icons-left">
+          <!-- can convert to input or pop out smth to change location -->
+          <!-- @click="getData" -->
+          <input
+            type="text"
+            placeholder="Enter Location"
+            class="input is-rounded is-link"
+          />
+          <span class="icon is-left">
+            <i class="fas fa-map-marker-alt"></i>
+          </span>
+        </p>
       </div>
     </div>
   </div>
@@ -324,43 +331,5 @@ body {
   text-align: center;
   margin: 10px 0 0 0;
   font-weight: 700;
-}
-
-.location-container {
-  padding: 25px 35px;
-}
-
-.location-button {
-  outline: none;
-  width: 100%;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  border: none;
-  border-radius: 25px;
-  padding: 10px;
-  font-family: "Montserrat", sans-serif;
-  background-image: var(--gradient);
-  color: #ffffff;
-  font-weight: 700;
-  -webkit-box-shadow: 0 0 30px -5px rgba(0, 0, 0, 0.25);
-  box-shadow: 0 0 30px -5px rgba(0, 0, 0, 0.25);
-  cursor: pointer;
-  -webkit-transition: -webkit-transform 200ms ease;
-  transition: -webkit-transform 200ms ease;
-  -o-transition: transform 200ms ease;
-  transition: transform 200ms ease;
-  transition: transform 200ms ease, -webkit-transform 200ms ease;
-}
-
-.location-button:hover {
-  -webkit-transform: scale(0.95);
-  -ms-transform: scale(0.95);
-  transform: scale(0.95);
-}
-
-.location-button .feather {
-  height: 1em;
-  width: auto;
-  margin-right: 5px;
 }
 </style>
