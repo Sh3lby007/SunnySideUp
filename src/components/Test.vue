@@ -1,4 +1,49 @@
-<script setup></script>
+<script setup>
+/**
+ * Aggregate function to load all the data, with a single set of
+ * latitude and longitude values from getLocation.
+ */
+async function getData() {
+  // Have to declare here since the lat and lon variables are not global but limited to getLocation() function
+  const { lat, lon } = await getLocation();
+
+  /**
+   * The reason why calling these async function calls do not need to put await in front
+   * is because these are fire and forget functions, since they do the value updating internally.
+   */
+  getForecast(lat, lon);
+  getWeather(lat, lon);
+}
+
+async function getLocation() {
+  const directGeocode = await fetch(
+    `https://api.openweathermap.org/geo/1.0/direct?q=${cityName.value}&appid=${API_KEY}`
+  ).then((response) => response.json());
+
+  // This api returns an array with a name 0 and since we only want the lat and lon values, therefore pulling them out and assigning them the correct values.
+  const { lat, lon } = directGeocode[0];
+
+  return { lat, lon };
+}
+
+// tempForecast becomes the array which we require to loop through to get the forecast data we need.
+
+async function getForecast(lat, lon) {
+  const weatherForecast = await fetch(
+    `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
+  ).then((response) => response.json());
+
+  tempForecast.value = weatherForecast.list;
+}
+
+async function getWeather(lat, lon) {
+  const weatherData = await fetch(
+    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
+  ).then((response) => response.json());
+  currentTemp.value = weatherData.main;
+  currentWeather.value = weatherData.weather[0];
+  windData.value = weatherData.wind;
+}
 
 <template>
   <div class="containers">
