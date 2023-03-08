@@ -1,4 +1,16 @@
 <script setup>
+import { ref } from "vue";
+
+// Global variables required to be used for global scope.
+let tempForecast = ref(undefined);
+let currentTemp = ref(undefined);
+let windData = ref(undefined);
+let currentWeather = ref(undefined);
+let inputLocation = ref("");
+let city = ref("");
+let countryName = ref("");
+const API_KEY = import.meta.env.VITE_APP_API_KEY;
+
 /**
  * Aggregate function to load all the data, with a single set of
  * latitude and longitude values from getLocation.
@@ -17,11 +29,14 @@ async function getData() {
 
 async function getLocation() {
   const directGeocode = await fetch(
-    `https://api.openweathermap.org/geo/1.0/direct?q=${cityName.value}&appid=${API_KEY}`
+    `https://api.openweathermap.org/geo/1.0/direct?q=${inputLocation.value}&appid=${API_KEY}`
   ).then((response) => response.json());
 
   // This api returns an array with a name 0 and since we only want the lat and lon values, therefore pulling them out and assigning them the correct values.
-  const { lat, lon } = directGeocode[0];
+  const { lat, lon, name, country } = directGeocode[0];
+
+  city.value = name;
+  countryName.value = country;
 
   return { lat, lon };
 }
@@ -67,16 +82,20 @@ async function getWeather(lat, lon) {
           }).format(new Date())
         }}</span>
         <i class="fas fa-2x fa-map-marker-alt">
-          <span class="is-inline-block is-size-4 my-4 ml-3">Singapore</span>
+          <span v-if="city" class="is-inline-block is-size-4 my-4 ml-3"
+            >{{ city }}, {{ countryName }}</span
+          >
         </i>
       </div>
 
-      <div class="weather-container">
+      <!-- !== Means strict inequality, so if the currentTemp is defined when the API is fetched, we want the div below to show value. -->
+
+      <div class="weather-container" v-if="currentTemp !== undefined">
         <!-- https://fontawesome.com/icons/categories/weather
         Below icon tag to be rendered conditionally depending on the weather returned from data -->
-        <i></i>
-        <h1 class="weather-temp">29dgree</h1>
-        <h3 class="weather-desc">sunny</h3>
+        <i class="fa-solid fa-clouds"></i>
+        <h1 class="weather-temp">{{ currentTemp.temp }}°C</h1>
+        <h3 class="weather-desc">{{ currentWeather.main }}</h3>
       </div>
     </div>
 
@@ -142,19 +161,30 @@ async function getWeather(lat, lon) {
         </ul>
       </div>
 
-      <div class="field px-5">
-        <p class="control has-icons-left">
+      <div class="field px-5 has-addons">
+        <div class="control has-icons-left is-expanded">
           <!-- can convert to input or pop out smth to change location -->
           <!-- @click="getData" -->
           <input
             type="text"
             placeholder="Enter Location"
             class="input is-rounded is-link"
+            v-model="inputLocation"
+            @keyup.enter="getData"
           />
           <span class="icon is-left">
             <i class="fas fa-map-marker-alt"></i>
           </span>
-        </p>
+        </div>
+
+        <div class="control">
+          <input
+            @click="getData"
+            class="button is-link is-light is-rounded is-outlined"
+            type="submit"
+            value="Search"
+          />
+        </div>
       </div>
     </div>
   </div>
