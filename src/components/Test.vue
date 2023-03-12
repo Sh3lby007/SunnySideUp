@@ -105,18 +105,22 @@ async function getWeather(lat, lon) {
     <div class="info-side">
       <div class="today-info-container">
         <div class="today-info">
-          <div class="precipitation">
-            <span class="title has-text-white">Precipitation</span>
-            <span class="value">0%</span>
-            <div class="clear"></div>
+          <div class="columns is-mobile is-vcentered">
+            <div class="column">
+              <span class="title has-text-white">Humidity</span>
+            </div>
+            <div class="column is-narrow">
+              <span>{{ currentTemp.humidity }} %</span>
+            </div>
           </div>
-          <div class="humidity">
-            <span class="title has-text-white">Humidity</span>
-            <span class="is-pulled-right" v-if="currentTemp !== undefined">
-          </div>
-          <div class="wind">
-            <span class="title has-text-white">Wind</span>
-            <span class="is-pulled-right" v-if="windData !== undefined"
+
+          <div class="columns is-mobile is-vcentered">
+            <div class="column">
+              <span class="title has-text-white">Wind</span>
+            </div>
+            <div class="column is-narrow" v-if="windData !== undefined">
+              <span>{{ windData.speed }} km/h</span>
+            </div>
           </div>
         </div>
       </div>
@@ -164,8 +168,6 @@ async function getWeather(lat, lon) {
 
       <div class="field px-5 has-addons">
         <div class="control has-icons-left is-expanded">
-          <!-- can convert to input or pop out smth to change location -->
-          <!-- @click="getData" -->
           <input
             type="text"
             placeholder="Enter Location"
@@ -276,17 +278,6 @@ body {
   height: 60px;
   width: auto;
 }
-
-.weather-temp {
-  margin: 0;
-  font-weight: 700;
-  font-size: 4em;
-}
-
-.weather-desc {
-  margin: 0;
-}
-
 .info-side {
   position: relative;
   float: left;
