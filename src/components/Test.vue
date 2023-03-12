@@ -62,7 +62,10 @@ async function getWeather(lat, lon) {
 </script>
 
 <template>
-  <div class="containers">
+  <div
+    class="containers is-flex is-align-items-center is-justify-content-center"
+    style="border-radius: 25px; height: 400px"
+  >
     <div class="weather-side">
       <div class="weather-gradient"></div>
 
@@ -109,13 +112,11 @@ async function getWeather(lat, lon) {
           </div>
           <div class="humidity">
             <span class="title has-text-white">Humidity</span>
-            <span class="value">0%</span>
-            <div class="clear"></div>
+            <span class="is-pulled-right" v-if="currentTemp !== undefined">
           </div>
           <div class="wind">
             <span class="title has-text-white">Wind</span>
-            <span class="value">24 km/h</span>
-            <div class="clear"></div>
+            <span class="is-pulled-right" v-if="windData !== undefined"
           </div>
         </div>
       </div>
@@ -193,18 +194,10 @@ async function getWeather(lat, lon) {
 <style scoped>
 @import url("https://fonts.googleapis.com/css?family=Montserrat:400,700,900&display=swap");
 
-:root {
-  --gradient: linear-gradient(135deg, #72edf2 10%, #5151e5 100%);
-}
-
 * {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   line-height: 1.25em;
-}
-
-.clear {
-  clear: both;
 }
 
 body {
@@ -262,7 +255,7 @@ body {
   height: 100%;
   top: 0;
   left: 0;
-  background-image: var(--gradient);
+  background-image: linear-gradient(135deg, #72edf2 10%, #5151e5 100%);
   border-radius: 25px;
   opacity: 0.8;
 }
