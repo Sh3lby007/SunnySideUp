@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 // Global variables required to be used for global scope.
 let tempForecast = ref(undefined);
@@ -10,6 +10,18 @@ let inputLocation = ref("");
 let city = ref("");
 let countryName = ref("");
 const API_KEY = import.meta.env.VITE_APP_API_KEY;
+const today = new Date();
+
+const getDays = computed(() => {
+  const formatter = new Intl.DateTimeFormat("default", { weekday: "short" });
+  const days = [];
+  for (let i = 0; i < 4; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+    days.push(formatter.format(date));
+  }
+  return days;
+});
 
 /**
  * Aggregate function to load all the data, with a single set of
@@ -74,7 +86,7 @@ async function getWeather(lat, lon) {
           {{
             new Intl.DateTimeFormat("default", {
               weekday: "long",
-            }).format(new Date())
+            }).format(date)
           }}
         </h2>
         <span class="is-block is-size-5">{{
@@ -82,7 +94,7 @@ async function getWeather(lat, lon) {
             day: "2-digit",
             month: "short",
             year: "numeric",
-          }).format(new Date())
+          }).format(date)
         }}</span>
         <div class="is-flex is-align-items-center">
           <i class="fas fa-map-marker-alt"></i>
@@ -126,40 +138,16 @@ async function getWeather(lat, lon) {
 
       <div class="week-container">
         <ul class="week-list">
-          <li class="active">
+          <li
+            v-for="(day, index) in getDays"
+            :key="index"
+            :class="{ active: index === 0 }"
+          >
             <!-- 
                 https://fontawesome.com/icons/categories/weather
                 Below icon tag to be rendered conditionally depending on the weather returned from data -->
             <i></i>
-            <span class="day-name">{{
-              new Intl.DateTimeFormat("default", {
-                weekday: "short",
-              }).format(new Date())
-            }}</span>
-            <span class="day-temp">29degree</span>
-          </li>
-          <li class="active">
-            <!-- 
-                https://fontawesome.com/icons/categories/weather
-                Below icon tag to be rendered conditionally depending on the weather returned from data -->
-            <i></i>
-            <span class="day-name">Tues</span>
-            <span class="day-temp">29degree</span>
-          </li>
-          <li class="active">
-            <!-- 
-                https://fontawesome.com/icons/categories/weather
-                Below icon tag to be rendered conditionally depending on the weather returned from data -->
-            <i></i>
-            <span class="day-name">Tues</span>
-            <span class="day-temp">29degree</span>
-          </li>
-          <li class="active">
-            <!-- 
-                https://fontawesome.com/icons/categories/weather
-                Below icon tag to be rendered conditionally depending on the weather returned from data -->
-            <i></i>
-            <span class="day-name">Tues</span>
+            <span class="day-name">{{ day }}</span>
             <span class="day-temp">29degree</span>
           </li>
         </ul>
