@@ -84,11 +84,12 @@ async function getWeather(lat, lon) {
             year: "numeric",
           }).format(new Date())
         }}</span>
-        <i class="fas fa-2x fa-map-marker-alt">
+        <div class="is-flex is-align-items-center">
+          <i class="fas fa-map-marker-alt"></i>
           <span v-if="city" class="is-inline-block is-size-4 my-4 ml-3"
             >{{ city }}, {{ countryName }}</span
           >
-        </i>
+        </div>
       </div>
 
       <!-- !== Means strict inequality, so if the currentTemp is defined when the API is fetched, we want the div below to show value. -->
@@ -96,31 +97,29 @@ async function getWeather(lat, lon) {
       <div class="weather-container" v-if="currentTemp !== undefined">
         <!-- https://fontawesome.com/icons/categories/weather
         Below icon tag to be rendered conditionally depending on the weather returned from data -->
-        <i class="fa-solid fa-clouds"></i>
-        <h1 class="weather-temp">{{ currentTemp.temp }}°C</h1>
-        <h3 class="weather-desc">{{ currentWeather.main }}</h3>
+        <i class="fa-solid fa-cloud"></i>
+        <h1 class="is-size-1 has-text-weight-bold">{{ currentTemp.temp }}°C</h1>
+        <h3 class="has-text-weight-semibold">{{ currentWeather.main }}</h3>
       </div>
     </div>
 
     <div class="info-side">
-      <div class="today-info-container">
-        <div class="today-info">
-          <div class="columns is-mobile is-vcentered">
-            <div class="column">
-              <span class="title has-text-white">Humidity</span>
-            </div>
-            <div class="column is-narrow">
-              <span>{{ currentTemp.humidity }} %</span>
-            </div>
+      <div class="today-info">
+        <div class="columns is-mobile is-vcentered">
+          <div class="column">
+            <span class="title has-text-white">Humidity</span>
           </div>
+          <div class="column is-narrow" v-if="currentTemp !== undefined">
+            <span>{{ currentTemp.humidity }} %</span>
+          </div>
+        </div>
 
-          <div class="columns is-mobile is-vcentered">
-            <div class="column">
-              <span class="title has-text-white">Wind</span>
-            </div>
-            <div class="column is-narrow" v-if="windData !== undefined">
-              <span>{{ windData.speed }} km/h</span>
-            </div>
+        <div class="columns is-mobile is-vcentered">
+          <div class="column">
+            <span class="title has-text-white">Wind</span>
+          </div>
+          <div class="column is-narrow" v-if="windData !== undefined">
+            <span>{{ windData.speed }} km/h</span>
           </div>
         </div>
       </div>
