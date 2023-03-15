@@ -1,11 +1,11 @@
 <template>
   <div>
-    <Search />
+    <Test />
     <RouterView />
   </div>
 </template>
 
 <script setup>
-import Search from "./components/Search.vue";
 import { RouterView } from "vue-router";
+import Test from "./components/Test.vue";
 </script>
