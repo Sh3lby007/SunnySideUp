@@ -12,6 +12,13 @@ let countryName = ref("");
 const API_KEY = import.meta.env.VITE_APP_API_KEY;
 const today = new Date();
 
+/**
+ * We just need the next 3 days of the week to be displayed.
+ * Therefore we loop through the today variable to generate
+ * an array of the next 3 days from today. Since this only
+ * happens once when today changes, we use a computed func
+ * so as to only call this func when there is a change.
+ */
 const getDays = computed(() => {
   const formatter = new Intl.DateTimeFormat("default", { weekday: "short" });
   const days = [];
@@ -86,7 +93,7 @@ async function getWeather(lat, lon) {
           {{
             new Intl.DateTimeFormat("default", {
               weekday: "long",
-            }).format(date)
+            }).format(today)
           }}
         </h2>
         <span class="is-block is-size-5">{{
@@ -94,7 +101,7 @@ async function getWeather(lat, lon) {
             day: "2-digit",
             month: "short",
             year: "numeric",
-          }).format(date)
+          }).format(today)
         }}</span>
         <div class="is-flex is-align-items-center">
           <i class="fas fa-map-marker-alt"></i>
