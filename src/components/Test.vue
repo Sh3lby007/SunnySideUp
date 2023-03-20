@@ -2,7 +2,7 @@
 import { ref, computed } from "vue";
 
 // Global variables required to be used for global scope.
-let tempForecast = ref(undefined);
+let tempForecast = ref([]);
 let currentTemp = ref(undefined);
 let windData = ref(undefined);
 let currentWeather = ref(undefined);
@@ -60,6 +60,15 @@ async function getLocation() {
   return { lat, lon };
 }
 
+const dtValues = [
+  today.getTime() / 1000, // current time
+  today.getTime() / 1000 + 86400, // 24 hr later
+  today.getTime() / 1000 + 172800, // 48 hr later
+  today.getTime() / 1000 + 259200, // 72 hr later
+];
+// Corresponds to a 1.5hr range in seconds.
+const range = ref(5400);
+
 // tempForecast becomes the array which we require to loop through to get the forecast data we need.
 
 async function getForecast(lat, lon) {
@@ -67,7 +76,17 @@ async function getForecast(lat, lon) {
     `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
   ).then((response) => response.json());
 
-  tempForecast.value = weatherForecast.list;
+  const filteredData = weatherForecast.list.filter((item) => {
+    for (const dtValue of dtValues) {
+      if (item.dt >= dtValue - range && item.dt <= dtValue + range) {
+        return true;
+      }
+    }
+    return false;
+  });
+
+  tempForecast.value = filteredData;
+  console.log(filteredData);
 }
 
 async function getWeather(lat, lon) {
