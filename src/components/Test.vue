@@ -163,7 +163,7 @@ async function getWeather(lat, lon) {
       </div>
 
       <div class="week-container">
-        <ul class="week-list">
+        <ul class="week-list" v-if="currentTemp !== undefined">
           <li
             v-for="(day, index) in getDays"
             :key="index"
@@ -174,7 +174,7 @@ async function getWeather(lat, lon) {
                 Below icon tag to be rendered conditionally depending on the weather returned from data -->
             <i></i>
             <span class="day-name">{{ day }}</span>
-            <span class="day-temp">29degree</span>
+            <span class="day-temp">{{ currentTemp.temp }}°C</span>
           </li>
         </ul>
       </div>
