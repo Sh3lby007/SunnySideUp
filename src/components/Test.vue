@@ -2,13 +2,6 @@
 import { ref, computed } from "vue";
 
 // Global variables required to be used for global scope.
-let tempForecast = ref([]);
-let currentTemp = ref(undefined);
-let windData = ref(undefined);
-let currentWeather = ref(undefined);
-let inputLocation = ref("");
-let city = ref("");
-let countryName = ref("");
 const API_KEY = import.meta.env.VITE_APP_API_KEY;
 const today = new Date();
 
@@ -46,6 +39,9 @@ async function getData() {
   getWeather(lat, lon);
 }
 
+let inputLocation = ref("");
+let city = ref("");
+let countryName = ref("");
 async function getLocation() {
   const directGeocode = await fetch(
     `https://api.openweathermap.org/geo/1.0/direct?q=${inputLocation.value}&appid=${API_KEY}`
@@ -70,7 +66,7 @@ const dtValues = [
 const range = ref(5400);
 
 // tempForecast becomes the array which we require to loop through to get the forecast data we need.
-
+let tempForecast = ref([]);
 async function getForecast(lat, lon) {
   const weatherForecast = await fetch(
     `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
@@ -88,6 +84,10 @@ async function getForecast(lat, lon) {
   tempForecast.value = filteredData;
   console.log(filteredData);
 }
+
+let currentTemp = ref(undefined);
+let windData = ref(undefined);
+let currentWeather = ref(undefined);
 
 async function getWeather(lat, lon) {
   const weatherData = await fetch(
