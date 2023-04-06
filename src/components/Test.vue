@@ -100,9 +100,18 @@ async function getWeather(lat, lon) {
 </script>
 
 <template>
+  <div class="columns is-mobile is-aling-items-center">
+    <div class="column is-half">
+      <img
+        src="https://images.unsplash.com/photo-1559963110-71b394e7494d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=675&q=80"
+        alt=""
+      />
+      <div class="gradient"></div>
+    </div>
+    <div class="column is-half"></div>
+  </div>
   <div
     class="containers is-flex is-align-items-center is-justify-content-center"
-    style="border-radius: 25px; height: 400px"
   >
     <div class="weather-side">
       <div class="weather-gradient"></div>
