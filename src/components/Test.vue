@@ -100,7 +100,7 @@ async function getWeather(lat, lon) {
 </script>
 
 <template>
-  <div class="columns is-mobile is-aling-items-center">
+  <div class="columns is-desktop is-align-items-center">
     <div class="column is-half">
       <img
         src="https://images.unsplash.com/photo-1559963110-71b394e7494d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=675&q=80"
@@ -272,7 +272,16 @@ body {
   -webkit-transform: scale(1.1) perspective(1500px) rotateY(10deg);
   transform: scale(1.1) perspective(1500px) rotateY(10deg);
 }
+.gradient {
+  background-image: linear-gradient(135deg, #72edf2 10%, #5151e5 100%);
+  border-radius: 25px;
+  opacity: 0.8;
+}
 
+.gradient:hover {
+  -webkit-transform: scale(1.1) perspective(1500px) rotateY(10deg);
+  transform: scale(1.1) perspective(1500px) rotateY(10deg);
+}
 .weather-gradient {
   position: absolute;
   width: 100%;
