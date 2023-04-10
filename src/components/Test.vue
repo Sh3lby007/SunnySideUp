@@ -100,16 +100,40 @@ async function getWeather(lat, lon) {
 </script>
 
 <template>
-  <div class="columns is-desktop is-align-items-center">
-    <div class="column is-half">
-      <img
-        src="https://images.unsplash.com/photo-1559963110-71b394e7494d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=675&q=80"
-        alt=""
-      />
-      <div class="gradient"></div>
+  <div class="container">
+    <div class="columns is-desktop is-align-items-center">
+      <div class="column is-half">
+        <div class="weather-side">
+          <div class="weather-gradient"></div>
+          <div class="date-container">
+            <h2 class="is-size-4">
+              {{
+                new Intl.DateTimeFormat("default", {
+                  weekday: "long",
+                }).format(today)
+              }}
+            </h2>
+            <span class="is-block is-size-5">{{
+              new Intl.DateTimeFormat("default", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              }).format(today)
+            }}</span>
+            <div class="is-flex is-align-items-center">
+              <i class="fas fa-map-marker-alt"></i>
+              <span v-if="city" class="is-inline-block is-size-4 my-4 ml-3"
+                >{{ city }}, {{ countryName }}</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-half"></div>
     </div>
-    <div class="column is-half"></div>
   </div>
+
   <div
     class="containers is-flex is-align-items-center is-justify-content-center"
   >
@@ -272,16 +296,7 @@ body {
   -webkit-transform: scale(1.1) perspective(1500px) rotateY(10deg);
   transform: scale(1.1) perspective(1500px) rotateY(10deg);
 }
-.gradient {
-  background-image: linear-gradient(135deg, #72edf2 10%, #5151e5 100%);
-  border-radius: 25px;
-  opacity: 0.8;
-}
 
-.gradient:hover {
-  -webkit-transform: scale(1.1) perspective(1500px) rotateY(10deg);
-  transform: scale(1.1) perspective(1500px) rotateY(10deg);
-}
 .weather-gradient {
   position: absolute;
   width: 100%;
