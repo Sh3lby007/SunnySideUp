@@ -100,32 +100,36 @@ async function getWeather(lat, lon) {
 </script>
 
 <template>
-  <div class="container">
+  <div
+    class="container is-flex is-align-items-center is-justify-content-center pt-5 pb-5"
+  >
     <div class="columns is-desktop is-align-items-center">
-      <div class="column is-half">
-        <div class="weather-side">
-          <div class="weather-gradient"></div>
-          <div class="date-container">
-            <h2 class="is-size-4">
-              {{
-                new Intl.DateTimeFormat("default", {
-                  weekday: "long",
-                }).format(today)
-              }}
-            </h2>
-            <span class="is-block is-size-5">{{
+      <div class="column is-half weather-side pt-20">
+        <img
+          src="https://images.unsplash.com/photo-1559963110-71b394e7494d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=675&q=80"
+        />
+
+        <div class="weather-gradient"></div>
+        <div class="date-container">
+          <h2 class="is-size-4">
+            {{
               new Intl.DateTimeFormat("default", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
+                weekday: "long",
               }).format(today)
-            }}</span>
-            <div class="is-flex is-align-items-center">
-              <i class="fas fa-map-marker-alt"></i>
-              <span v-if="city" class="is-inline-block is-size-4 my-4 ml-3"
-                >{{ city }}, {{ countryName }}</span
-              >
-            </div>
+            }}
+          </h2>
+          <span class="is-block is-size-5">{{
+            new Intl.DateTimeFormat("default", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            }).format(today)
+          }}</span>
+          <div class="is-flex is-align-items-center">
+            <i class="fas fa-map-marker-alt"></i>
+            <span v-if="city" class="is-inline-block is-size-4 my-4 ml-3"
+              >{{ city }}, {{ countryName }}</span
+            >
           </div>
         </div>
       </div>
@@ -273,7 +277,6 @@ body {
   color: #ffffff;
   height: 400px;
 }
-
 .weather-side {
   position: relative;
   height: 100%;
