@@ -104,12 +104,11 @@ async function getWeather(lat, lon) {
     class="container is-flex is-align-items-center is-justify-content-center pt-5 pb-5"
   >
     <div class="columns is-desktop is-align-items-center">
-      <div class="column is-half weather-side pt-20">
+      <div class="column is-half pt-20 img-side">
         <img
+          class="img"
           src="https://images.unsplash.com/photo-1559963110-71b394e7494d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=675&q=80"
         />
-
-        <div class="weather-gradient"></div>
         <div class="date-container">
           <h2 class="is-size-4">
             {{
@@ -310,7 +309,29 @@ body {
   border-radius: 25px;
   opacity: 0.8;
 }
+.img {
+  background-image: linear-gradient(135deg, #72edf2 10%, #5151e5 100%);
+  border-radius: 25px;
+  opacity: 0.7;
+}
 
+.img-side:hover {
+  -webkit-transform: scale(1.1) perspective(1500px) rotateY(10deg);
+  transform: scale(1.1) perspective(1500px) rotateY(10deg);
+}
+
+.img-side {
+  border-radius: 25px;
+  -webkit-box-shadow: 0 0 20px -10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 20px -10px rgba(0, 0, 0, 0.2);
+  -webkit-transition: -webkit-transform 300ms ease;
+  transition: -webkit-transform 300ms ease;
+  -o-transition: transform 300ms ease;
+  transition: transform 300ms ease;
+  transition: transform 300ms ease, -webkit-transform 300ms ease;
+  -webkit-transform: translateZ(0) scale(1.02) perspective(1000px);
+  transform: translateZ(0) scale(1.02) perspective(1000px);
+}
 .date-container {
   position: absolute;
   top: 25px;
